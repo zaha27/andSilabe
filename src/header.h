@@ -7,7 +7,8 @@ typedef struct {
 
 typedef struct {
     char litera;
-    int tip; // -1 0 1; -1 - consoana, 0 - semivocala, 1 - vocala
+    int tip; /*-1 0 1; -1 - consoana, 
+        0 - semivocala, 1 - vocala*/ 
 } lit;
 
 char *citire();

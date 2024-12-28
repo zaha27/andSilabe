@@ -72,22 +72,47 @@ int eVocala(char c) {
     return strchr("aeiouAEIOU", c) != NULL;
 }
 
-//a e i o u
-// formare semivocale : daca a si e sunt una langa alta => se desparte dupa a;
+char *despartireCuvant(char *cuvant) {
+    int lungime = strlen(cuvant);
+    char *rezultat = malloc(2 * lungime + 1); // Extra space for hyphens
+    int pozRezultat = 0;
+    int ultimaVocala = -1;
 
+    // Copy first character
+    rezultat[pozRezultat++] = cuvant[0];
+    
+    if (eVocala(cuvant[0])) {
+        ultimaVocala = 0;
+    }
 
-char *despartireCuvant(char *word) {
-    lit *vector = 0;
-    vector = malloc(255 * sizeof(lit));
-    for(int i = 0; i < strlen(word); ++i) {
-        if(eVocala(word[i])) {
-            
+    for (int i = 1; i < lungime; i++) {
+        // Rules for splitting:
+        // 1. Between two vowels
+        // 2. Between consonant and vowel if consonant follows vowel
+        // 3. Between consonants if second starts a valid syllable
+        
+        if (eVocala(cuvant[i])) {
+            if (ultimaVocala == i-1) {
+                rezultat[pozRezultat++] = '-';
+            }
+            rezultat[pozRezultat++] = cuvant[i];
+            ultimaVocala = i;
         } else {
-            vector[i].litera = word[i];
-            vector[i].tip = -1;
+            // Current char is consonant
+            if (i < lungime-1 && eVocala(cuvant[i+1])) {
+                // Next char is vowel
+                if (ultimaVocala != -1 && i-ultimaVocala > 1) {
+                    rezultat[pozRezultat++] = '-';
+                }
+            }
+            rezultat[pozRezultat++] = cuvant[i];
         }
     }
+    
+    rezultat[pozRezultat] = '\0';
+    return rezultat;
 }
+
 
 _v *generareVectorInSilabe(_v *vector, int nrCuvinte) {
     _v *inSilabe = alocareVectorCuvinte(nrCuvinte);
